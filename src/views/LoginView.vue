@@ -27,7 +27,7 @@
           <input
             type="password"
             id="password"
-            v-model="credentials.password"
+            v-model="credentials.senha"
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-gray-500 focus:border-gray-500"
             placeholder="Digite sua senha"
             required
@@ -47,6 +47,7 @@
 </template>
 
 <script lang="ts">
+import { HttpClient } from "@/common/http-client/http-client";
 import { defineComponent, ref } from "vue";
 import { useRouter } from "vue-router";
 
@@ -54,11 +55,25 @@ export default defineComponent({
   name: "LoginView",
   setup() {
     const router = useRouter();
-    const credentials = ref({ email: "", password: "" });
+    const credentials = ref({ email: "", senha: "" });
     const error = ref("");
 
     const login = async () => {
-      router.push("/admin/dashboard");
+      const response = await HttpClient.getInstance().request({
+        url: "/login",
+        method: "POST",
+        data: credentials.value,
+      });
+
+      if (response) {
+        localStorage.setItem("token", response.token);
+        localStorage.setItem("role", response.role);
+
+        if (response.role === "1") {
+          return router.push("/admin/dashboard");
+        }
+        return router.push("/citizen/home");
+      }
     };
 
     return { credentials, error, login };
