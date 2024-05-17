@@ -70,6 +70,7 @@ export default {
   },
   data() {
     return {
+      service: new OrgaoService(),
       orgaos: [],
       orgaoForm: {
         id: null,
@@ -80,29 +81,27 @@ export default {
   },
   methods: {
     async fetchOrgaos() {
-      const orgaos = await new OrgaoService().get();
+      const orgaos = await this.service.get();
       this.orgaos = orgaos;
     },
-    handleSubmit() {
+    async handleSubmit() {
       if (this.editing) {
-        const index = this.orgaos.findIndex((o) => o.id === this.orgaoForm.id);
-        if (index !== -1) {
-          this.orgaos[index] = { ...this.orgaoForm };
-        }
+        await this.service.put(this.orgaoForm);
         this.editing = false;
       } else {
-        const newId = this.orgaos.length + 1;
-        this.orgaos.push({ id: newId, nome: this.orgaoForm.nome });
+        await this.service.create(this.orgaoForm);
       }
+      await this.fetchOrgaos();
       this.resetForm();
     },
     editOrgao(orgao) {
       this.orgaoForm = { ...orgao };
       this.editing = true;
     },
-    deleteOrgao(id) {
+    async deleteOrgao(id) {
       if (confirm("Tem certeza que deseja excluir este órgão?")) {
-        this.orgaos = this.orgaos.filter((o) => o.id !== id);
+        await this.service.delete(id);
+        await this.fetchOrgaos();
       }
     },
     resetForm() {
