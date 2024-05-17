@@ -69,6 +69,8 @@ export default defineComponent({
         localStorage.setItem("token", response.token);
         localStorage.setItem("role", response.role);
 
+        HttpClient.getInstance().setAuthorization(response.token);
+
         if (response.role === "1") {
           return router.push("/admin/dashboard");
         }

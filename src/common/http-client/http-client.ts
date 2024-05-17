@@ -14,12 +14,21 @@ export class HttpClient {
       (response) => response,
       (error) => this.errorInterceptor(error)
     );
+
+    const token = localStorage.getItem("token");
+    if (token) {
+      this.setAuthorization(token);
+    }
   }
 
   private async errorInterceptor(error: AxiosError<any>): Promise<void> {
     if (error.response?.data.message) {
       useToast().error(error.response.data.message);
     }
+  }
+
+  public setAuthorization(token: string): void {
+    this.client.defaults.headers.common["Authorization"] = `Bearer ${token}`;
   }
 
   public static getInstance(): HttpClient {

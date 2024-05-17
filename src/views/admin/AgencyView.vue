@@ -61,14 +61,16 @@
 </template>
 
 <script>
+import { OrgaoService } from "@/services/orgao-service";
+
 export default {
   name: "AgencyView",
+  beforeMount() {
+    this.fetchOrgaos();
+  },
   data() {
     return {
-      orgaos: [
-        { id: 1, nome: "SEDUC" },
-        { id: 2, nome: "Policia Militar" },
-      ],
+      orgaos: [],
       orgaoForm: {
         id: null,
         nome: "",
@@ -77,6 +79,10 @@ export default {
     };
   },
   methods: {
+    async fetchOrgaos() {
+      const orgaos = await new OrgaoService().get();
+      this.orgaos = orgaos;
+    },
     handleSubmit() {
       if (this.editing) {
         const index = this.orgaos.findIndex((o) => o.id === this.orgaoForm.id);
