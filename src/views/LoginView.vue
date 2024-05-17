@@ -42,6 +42,14 @@
           </button>
         </div>
       </form>
+      <div>
+        <button
+          @click="goToRegister"
+          class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-gray-800 bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-800"
+        >
+          Criar Conta
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -81,7 +89,11 @@ export default defineComponent({
       }
     };
 
-    return { credentials, error, login };
+    const goToRegister = () => {
+      router.push("/register");
+    };
+
+    return { credentials, error, login, goToRegister };
   },
 });
 </script>

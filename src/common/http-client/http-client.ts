@@ -23,6 +23,11 @@ export class HttpClient {
   }
 
   private async errorInterceptor(error: AxiosError<any>): Promise<void> {
+    if (error.response?.status === 401 || error.response?.status === 403) {
+      useToast().error("Sessão expirada, faça login novamente.");
+      localStorage.removeItem("token");
+      window.location.replace("/login");
+    }
     if (error.response?.data.message) {
       useToast().error(error.response.data.message);
     }
