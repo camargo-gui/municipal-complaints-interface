@@ -31,6 +31,10 @@ export class HttpClient {
     this.client.defaults.headers.common["Authorization"] = `Bearer ${token}`;
   }
 
+  public resetToken(): void {
+    delete this.client.defaults.headers.common["Authorization"];
+  }
+
   public static getInstance(): HttpClient {
     if (!HttpClient.instance) {
       HttpClient.instance = new HttpClient();

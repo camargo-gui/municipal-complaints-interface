@@ -40,7 +40,7 @@
         >
           <option disabled value="">Selecione um tipo</option>
           <option v-for="tipo in tipos" :key="tipo" :value="tipo">
-            {{ tipo }}
+            {{ tipo.nome }}
           </option>
         </select>
       </div>
@@ -55,7 +55,7 @@
         >
           <option disabled value="">Selecione um órgão</option>
           <option v-for="orgao in orgaos" :key="orgao" :value="orgao">
-            {{ orgao }}
+            {{ orgao.nome }}
           </option>
         </select>
       </div>
@@ -89,9 +89,14 @@
 </template>
 
 <script>
+import { OrgaoService } from '@/services/orgao-service';
+import { TipoService } from '@/services/tipo-service';
+
 export default {
   data() {
     return {
+      tipoService: new TipoService(),
+      orgaoService: new OrgaoService(),
       novaReclamacao: {
         titulo: "",
         descricao: "",
@@ -99,22 +104,26 @@ export default {
         orgao: "",
         prioridade: "",
       },
-      tipos: ["Infraestrutura", "Serviço Público", "Saúde", "Educação"],
-      orgaos: [
-        "Prefeitura",
-        "SETRAN",
-        "Ministério da Saúde",
-        "Secretaria de Educação",
-      ],
+      tipos: [],
+      orgaos: [],
       prioridades: ["Baixa", "Média", "Alta"],
     };
   },
   methods: {
     submitReclamacao() {
-      // Logica para enviar os dados ao servidor
-      console.log("Reclamação enviada:", this.novaReclamacao);
-      this.$router.push("/citizen/home"); // Redireciona para a home após o envio
+      
+      this.$router.push("/citizen/home");
+    },
+    async fetchTipos() {
+      this.tipos = await this.tipoService.getAll();
+    },
+    async fetchOrgaos() {
+      this.orgaos = await this.orgaoService.get();
     },
   },
+  beforeMount() {
+    this.fetchTipos();
+    this.fetchOrgaos();
+  }
 };
 </script>

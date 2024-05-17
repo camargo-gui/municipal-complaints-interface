@@ -53,6 +53,9 @@ import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "LoginView",
+  beforeMount() {
+    HttpClient.getInstance().resetToken();
+  },
   setup() {
     const router = useRouter();
     const credentials = ref({ email: "", senha: "" });
