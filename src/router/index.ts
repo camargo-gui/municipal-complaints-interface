@@ -14,9 +14,9 @@ const routes: Array<RouteRecordRaw> = [
     component: LoginView,
   },
   {
-    path: "/register",
-    name: "register",
-    component: RegisterView,
+    path: '/register',
+    name: 'register',
+    component: RegisterView
   },
   {
     path: "/admin/dashboard",
@@ -24,8 +24,8 @@ const routes: Array<RouteRecordRaw> = [
     component: AdminDashboardView,
   },
   {
-    path: "/admin/denuncias",
-    name: "admin-denuncias",
+    path: "/denuncias",
+    name: "denuncias",
     component: CompaintsView,
   },
   {
@@ -42,11 +42,7 @@ const routes: Array<RouteRecordRaw> = [
     path: "/citizen/new-compaint",
     name: "citizen-new-compaint",
     component: NewCompaintView,
-  },
-  {
-    path: "/",
-    redirect: "/login",
-  },
+  }
 ];
 
 const router = createRouter({

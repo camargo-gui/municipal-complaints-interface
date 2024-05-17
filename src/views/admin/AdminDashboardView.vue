@@ -21,7 +21,7 @@
         <p class="text-gray-600">Visualizar e gerenciar as denúncias.</p>
         <button
           class="mt-4 bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded"
-          @click="$router.push('/admin/denuncias')"
+          @click="$router.push('/denuncias')"
         >
           Acessar
         </button>

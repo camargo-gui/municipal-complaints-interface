@@ -30,30 +30,37 @@
               {{ new Date(denuncia.data).toLocaleDateString() }}</span
             >
           </div>
-          <div v-if="denuncia.feedback" class="feedback">
-            <h3>Feedback:</h3>
-            <p>{{ denuncia.feedback }}</p>
+            <div>
+              <div class="feedback">
+                <h3>Feedback:</h3>
+                <p>{{ denuncia.feedback ?? 'Sem feedback'}}</p>
+              </div>
+            </div>
+            <div v-if="nivel == 1">
+            <div class="card-footer">
+              <button
+                @click="toggleFeedbackForm(denuncia.id)"
+                class="btn btn-primary"
+              >
+                {{ denuncia.feedback ? "Editar" : "Adicionar" }} Feedback
+              </button>
+              <button
+                @click="deleteDenuncia(denuncia.id)"
+                class="btn btn-danger"
+              >
+                Excluir
+              </button>
+            </div>
+            <div v-if="denuncia.showFeedbackForm" class="feedback-form">
+              <textarea
+                v-model="denuncia.newFeedback"
+                placeholder="Escreva seu feedback aqui"
+              ></textarea>
+              <button @click="submitFeedback(denuncia)" class="btn btn-success">
+                Salvar Feedback
+              </button>
+            </div>
           </div>
-        </div>
-        <div class="card-footer">
-          <button
-            @click="toggleFeedbackForm(denuncia.id)"
-            class="btn btn-primary"
-          >
-            {{ denuncia.feedback ? "Editar" : "Adicionar" }} Feedback
-          </button>
-          <button @click="deleteDenuncia(denuncia.id)" class="btn btn-danger">
-            Excluir
-          </button>
-        </div>
-        <div v-if="denuncia.showFeedbackForm" class="feedback-form">
-          <textarea
-            v-model="denuncia.newFeedback"
-            placeholder="Escreva seu feedback aqui"
-          ></textarea>
-          <button @click="submitFeedback(denuncia)" class="btn btn-success">
-            Salvar Feedback
-          </button>
         </div>
       </div>
     </div>
@@ -61,7 +68,8 @@
 </template>
 
 <script>
-import { DenunciaService } from '@/services/denuncia-service';
+import { HttpClient } from "@/common/http-client/http-client";
+import { DenunciaService } from "@/services/denuncia-service";
 
 export default {
   name: "ComplaintsView",
@@ -69,6 +77,8 @@ export default {
     return {
       service: new DenunciaService(),
       denuncias: [],
+      userId: HttpClient.getInstance().getToken().getId(),
+      nivel: HttpClient.getInstance().getToken().getNivel(),
     };
   },
   beforeMount() {
@@ -76,7 +86,11 @@ export default {
   },
   methods: {
     async fetchDenuncias() {
-      this.denuncias = await this.service.getAll();
+      if (this.nivel === "1") {
+        this.denuncias = await this.service.getAll();
+      } else {
+        this.denuncias = await this.service.getById(this.userId);
+      }
     },
     toggleFeedbackForm(denunciaId) {
       const denuncia = this.denuncias.find((d) => d.id === denunciaId);

@@ -1,5 +1,6 @@
 import { Token } from "@/entities/token";
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from "axios";
+import { useRouter } from "vue-router";
 import { useToast } from "vue-toastification";
 
 export class HttpClient {
@@ -26,7 +27,7 @@ export class HttpClient {
     if (error.response?.status === 401 || error.response?.status === 403) {
       useToast().error("Sessão expirada, faça login novamente.");
       localStorage.removeItem("token");
-      window.location.replace("/login");
+      window.location.href = "/#/login";
     }
     if (error.response?.data.message) {
       useToast().error(error.response.data.message);

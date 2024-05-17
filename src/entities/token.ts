@@ -19,8 +19,8 @@ export class Token {
     return payload.id;
   }
 
-  public getRole(): number {
+  public getNivel(): string {
     const payload = this.getPayload();
-    return payload.role;
+    return payload.nivel;
   }
 }
