@@ -13,8 +13,8 @@
         </div>
         <div class="card-body">
           <div class="info">
-            <span><strong>Órgão:</strong> {{ denuncia.orgao }}</span>
-            <span><strong>Tipo:</strong> {{ denuncia.tipo }}</span>
+            <span><strong>Órgão:</strong> {{ denuncia.orgao.nome }}</span>
+            <span><strong>Tipo:</strong> {{ denuncia.tipo.nome }}</span>
             <span
               ><strong>Urgência:</strong>
               <span
@@ -61,39 +61,23 @@
 </template>
 
 <script>
+import { DenunciaService } from '@/services/denuncia-service';
+
 export default {
   name: "ComplaintsView",
   data() {
     return {
-      denuncias: [
-        {
-          id: 1,
-          titulo: "Semáforo Quebrado",
-          texto: "O semáforo da esquina não está funcionando.",
-          urgencia: 4,
-          data: "2021-05-12",
-          orgao: "SETRAN",
-          tipo: "Trânsito",
-          feedback: null,
-          showFeedbackForm: false,
-          newFeedback: "",
-        },
-        {
-          id: 2,
-          titulo: "Buraco na Rua",
-          texto: "Existe um grande buraco na rua principal.",
-          urgencia: 3,
-          data: "2021-05-15",
-          orgao: "Prefeitura",
-          tipo: "Infraestrutura Urbana",
-          feedback: "Equipe já enviada para reparo.",
-          showFeedbackForm: false,
-          newFeedback: "",
-        },
-      ],
+      service: new DenunciaService(),
+      denuncias: [],
     };
   },
+  beforeMount() {
+    this.fetchDenuncias();
+  },
   methods: {
+    async fetchDenuncias() {
+      this.denuncias = await this.service.getAll();
+    },
     toggleFeedbackForm(denunciaId) {
       const denuncia = this.denuncias.find((d) => d.id === denunciaId);
       denuncia.showFeedbackForm = !denuncia.showFeedbackForm;

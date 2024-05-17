@@ -1,3 +1,4 @@
+import { Token } from "@/entities/token";
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from "axios";
 import { useToast } from "vue-toastification";
 
@@ -29,6 +30,13 @@ export class HttpClient {
 
   public setAuthorization(token: string): void {
     this.client.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  }
+
+  public getToken(): Token | undefined {
+    const token = localStorage.getItem("token");
+    if (token) {
+      return new Token(token);
+    }
   }
 
   public resetToken(): void {

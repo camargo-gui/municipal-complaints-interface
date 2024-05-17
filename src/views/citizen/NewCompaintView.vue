@@ -89,14 +89,18 @@
 </template>
 
 <script>
-import { OrgaoService } from '@/services/orgao-service';
-import { TipoService } from '@/services/tipo-service';
+import { Denuncia } from "@/entities/denuncia";
+import { DenunciaService } from "@/services/denuncia-service";
+import { OrgaoService } from "@/services/orgao-service";
+import { TipoService } from "@/services/tipo-service";
+import { HttpClient } from "@/common/http-client/http-client";
 
 export default {
   data() {
     return {
       tipoService: new TipoService(),
       orgaoService: new OrgaoService(),
+      denunciaService: new DenunciaService(),
       novaReclamacao: {
         titulo: "",
         descricao: "",
@@ -110,7 +114,28 @@ export default {
     };
   },
   methods: {
-    submitReclamacao() {
+    getPrioridade(prioridade) {
+      if (prioridade === "Baixa") {
+        return 3;
+      } else if (prioridade === "Média") {
+        return 2;
+      } else {
+        return 1;
+      }
+    },
+    async submitReclamacao() {
+      const denuncia = new Denuncia(
+        0,
+        this.novaReclamacao.titulo,
+        this.novaReclamacao.descricao,
+        this.getPrioridade(this.novaReclamacao.prioridade),
+        new Date(),
+        this.novaReclamacao.orgao,
+        this.novaReclamacao.tipo,
+        HttpClient.getInstance().getToken().getId()
+      );
+
+      await this.denunciaService.create(denuncia);
       
       this.$router.push("/citizen/home");
     },
@@ -124,6 +149,6 @@ export default {
   beforeMount() {
     this.fetchTipos();
     this.fetchOrgaos();
-  }
+  },
 };
 </script>

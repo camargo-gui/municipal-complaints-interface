@@ -23,9 +23,9 @@
             <h2 class="text-xl font-semibold text-gray-700">
               {{ reclamacao.titulo }}
             </h2>
-            <p class="text-gray-600">{{ reclamacao.descricao }}</p>
+            <p class="text-gray-600">{{ reclamacao.texto }}</p>
             <span class="text-sm font-medium text-gray-500">{{
-              reclamacao.data
+              formatDate(new Date(reclamacao.data))
             }}</span>
           </div>
         </div>
@@ -37,7 +37,7 @@
             {{ reclamacaoSelecionada.titulo }}
           </h2>
           <p class="my-2 text-gray-600">
-            {{ reclamacaoSelecionada.descricao }}
+            {{ reclamacaoSelecionada.texto }}
           </p>
           <div class="mt-4">
             <h3 class="text-lg font-semibold text-gray-700">Feedback</h3>
@@ -52,37 +52,31 @@
 </template>
 
 <script>
+import { HttpClient } from '@/common/http-client/http-client';
+import { DenunciaService } from '@/services/denuncia-service';
+
 export default {
   name: "CitizenHome",
   data() {
     return {
-      reclamacoes: [
-        {
-          id: 1,
-          titulo: "Semáforo Quebrado",
-          descricao: "O semáforo da esquina não está funcionando.",
-          data: new Date("2021-05-12"),
-          feedback: "Reparo agendado para 03/06/2021",
-        },
-        {
-          id: 2,
-          titulo: "Buraco na Rua",
-          descricao: "Existe um grande buraco na rua principal.",
-          data: new Date("2021-05-15"),
-          feedback: "Equipe já enviada para reparo.",
-        },
-        // Mais reclamações aqui
-      ],
+      service: new DenunciaService(),
+      reclamacoes: [],
       reclamacaoSelecionada: null,
     };
   },
   methods: {
+    async fetchReclamacoes() {
+      this.reclamacoes = await this.service.getById(HttpClient.getInstance().getToken().getId());
+    },
     selectReclamacao(reclamacao) {
       this.reclamacaoSelecionada = reclamacao;
     },
     formatDate(date) {
       return date.toLocaleDateString();
     },
+  },
+  beforeMount() {
+    this.fetchReclamacoes();
   },
 };
 </script>
