@@ -62,6 +62,7 @@
         <div>
           <button
             type="submit"
+            @click="create"
             class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-800"
           >
             Registrar
@@ -81,12 +82,29 @@
 </template>
 
 <script lang="ts">
-import { HttpClient } from "@/common/http-client/http-client";
+import { UsuarioService } from "@/services/usuario-service";
 import { defineComponent, ref } from "vue";
 import { useRouter } from "vue-router";
+import { useToast } from "vue-toastification";
 
 export default defineComponent({
   name: "RegisterView",
+  data() {
+    return {
+      service: new UsuarioService(),
+    };
+  },
+  methods: {
+    async create() {
+      await this.service.create({
+        cpf: this.credentials.cpf,
+        email: this.credentials.email,
+        senha: this.credentials.senha,
+      });
+      useToast().success("Usuário criado com sucesso!");
+      this.$router.push("/login");
+    }
+  },
   setup() {
     const router = useRouter();
     const credentials = ref({ cpf: "", email: "", senha: "", confirmSenha: "" });
@@ -96,24 +114,6 @@ export default defineComponent({
       if (credentials.value.senha !== credentials.value.confirmSenha) {
         error.value = "As senhas não coincidem!";
         return;
-      }
-
-      const response = await HttpClient.getInstance().request({
-        url: "/register",
-        method: "POST",
-        data: credentials.value,
-      });
-
-      if (response) {
-        localStorage.setItem("token", response.token);
-        localStorage.setItem("role", response.role);
-
-        HttpClient.getInstance().setAuthorization(response.token);
-
-        if (response.role === "1") {
-          return router.push("/admin/dashboard");
-        }
-        return router.push("/citizen/home");
       }
     };
 
