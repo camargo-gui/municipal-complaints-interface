@@ -4,20 +4,23 @@ import { Orgao } from "@/entities/orgao";
 export class OrgaoService {
   private client: HttpClient;
 
+  private adminUrl = "/api/admin/orgao";
+  private publicUrl = "/api/public/orgao";
+
   public constructor() {
     this.client = HttpClient.getInstance();
   }
 
   public async get(): Promise<Orgao[]> {
     return this.client.request({
-      url: "/api/orgao",
+      url: this.publicUrl,
       method: "GET",
     });
   }
 
   public async put(orgao: Orgao): Promise<Orgao> {
     return this.client.request({
-      url: `/api/orgao/${orgao.id}`,
+      url: `${this.adminUrl}/${orgao.id}`,
       method: "PUT",
       data: orgao,
     });
@@ -25,7 +28,7 @@ export class OrgaoService {
 
   public async create(orgao: Orgao): Promise<void> {
     return this.client.request({
-      url: "/api/orgao",
+      url: this.adminUrl,
       method: "POST",
       data: orgao,
     });
@@ -33,7 +36,7 @@ export class OrgaoService {
 
   public async delete(id: number): Promise<void> {
     return this.client.request({
-      url: `/api/orgao/${id}`,
+      url: `${this.adminUrl}/${id}`,
       method: "DELETE",
     });
   }

@@ -1,5 +1,5 @@
 import { Token } from "@/entities/token";
-import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from "axios";
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 import { useRouter } from "vue-router";
 import { useToast } from "vue-toastification";
 
@@ -13,7 +13,7 @@ export class HttpClient {
     });
 
     this.client.interceptors.response.use(
-      (response) => response,
+      (response) => this.successInterceptor(response),
       (error) => this.errorInterceptor(error)
     );
 
@@ -21,6 +21,13 @@ export class HttpClient {
     if (token) {
       this.setAuthorization(token);
     }
+  }
+
+  private successInterceptor(response: AxiosResponse<any>): AxiosResponse<any> {
+    if (response.data && response.data.message) {
+      useToast().success(response.data.message);
+    }
+    return response;
   }
 
   private async errorInterceptor(error: AxiosError<any>): Promise<void> {

@@ -4,7 +4,7 @@
   >
     <div class="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-lg">
       <h1 class="text-center text-2xl font-bold text-gray-800">
-        Acesso ao Sistema Corporativo
+        Ativo e operante
       </h1>
       <form @submit.prevent="login" class="space-y-6">
         <div>
@@ -16,7 +16,7 @@
             id="email"
             v-model="credentials.email"
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-gray-500 focus:border-gray-500"
-            placeholder="Insira seu e-mail corporativo"
+            placeholder="Insira seu e-mail"
             required
           />
         </div>

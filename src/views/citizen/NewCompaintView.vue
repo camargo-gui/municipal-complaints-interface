@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto p-8">
+  <div class="w-screen h-screen p-8 bg-gray-200">
     <h1 class="text-3xl font-bold text-center mb-6">Criar Nova Reclamação</h1>
     <form
       @submit.prevent="submitReclamacao"
@@ -137,7 +137,7 @@ export default {
 
       await this.denunciaService.create(denuncia);
       
-      this.$router.push("/citizen/home");
+      this.$router.push("/denuncias");
     },
     async fetchTipos() {
       this.tipos = await this.tipoService.getAll();

@@ -1,11 +1,11 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
 import LoginView from "../views/LoginView.vue";
 import AdminDashboardView from "../views/admin/AdminDashboardView.vue";
-import CompaintsView from "../views/CompaintsView.vue";
+import CompaintsView from "../views/CompaintsView/CompaintsView.vue";
 import AgencyView from "../views/admin/AgencyView.vue";
-import CitizenHomeView from "../views/citizen/CitizenHomeView.vue";
 import NewCompaintView from "../views/citizen/NewCompaintView.vue";
 import RegisterView from "../views/RegisterView.vue";
+import TypeView from "../views/admin/TypeView.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -29,19 +29,23 @@ const routes: Array<RouteRecordRaw> = [
     component: CompaintsView,
   },
   {
+    path: "/admin/tipos",
+    name: "tipos",
+    component: TypeView,
+  },
+  {
     path: "/admin/orgaos",
     name: "admin-orgaos",
     component: AgencyView,
   },
   {
-    path: "/citizen/home",
-    name: "citizen-home",
-    component: CitizenHomeView,
-  },
-  {
-    path: "/citizen/new-compaint",
+    path: "/cidadao/criar-denuncia",
     name: "citizen-new-compaint",
     component: NewCompaintView,
+  },
+  {
+    path: "/",
+    redirect: "/login",
   }
 ];
 
