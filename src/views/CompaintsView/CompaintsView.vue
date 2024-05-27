@@ -6,63 +6,95 @@
     <button class="btn btn-primary" @click="criarDenuncia">
       Criar Nova Reclamação
     </button>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mx-auto mt-8">
-      <div v-for="denuncia in denuncias" :key="denuncia.id" class="card relative">
-        <div class="card-header">
-          <h2>{{ denuncia.titulo }}</h2>
-          <p>{{ denuncia.texto }}</p>
-        </div>
-        <div class="card-body">
-          <div class="info">
-            <span><strong>Órgão:</strong> {{ denuncia.orgao.nome }}</span>
-            <span><strong>Tipo:</strong> {{ denuncia.tipo.nome }}</span>
-            <span>
-              <strong>Urgência:</strong>
-              <span :class="{
-                'high-urgency': denuncia.urgencia > 3,
-                'medium-urgency': denuncia.urgencia <= 3,
-              }">
-                {{ denuncia.urgencia }}
-              </span>
-            </span>
-            <span>
-              <strong>Data:</strong>
-              {{ formatDate(denuncia.data) }}
-            </span>
+    <div
+      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mx-auto mt-8"
+    >
+      <div
+        v-for="denuncia in denuncias"
+        :key="denuncia.id"
+        class="card relative p-4 bg-white shadow-lg rounded-lg"
+      >
+        <div v-if="!denuncia.showDetails">
+          <div class="card-header">
+            <h2>{{ denuncia.titulo }}</h2>
+            <p>{{ denuncia.texto }}</p>
           </div>
-          <div class="card-footer">
-            <button @click="toggleDetails(denuncia)" class="btn btn-secondary">
-              {{ denuncia.showDetails ? 'Ocultar Feedback' : 'Ver Feedback' }}
-            </button>
-            <button @click="deleteDenuncia(denuncia.id)" class="btn btn-danger">
-              Excluir
-            </button>
-        </div>
-          <transition name="accordion">
-            <div v-if="denuncia.showDetails" class="details absolute inset-x-0 top-full bg-white shadow-lg p-4 z-10">
-              <div class="feedback">
-                <h3>Feedback:</h3>
-                <p>{{ denuncia.feedback ?? 'Sem feedback' }}</p>
-              </div>
-              <div v-if="nivel == 1" class="card-footer">
-                <button @click="toggleFeedbackForm(denuncia.id)" class="btn btn-primary">
-                  {{ denuncia.feedback ? "Editar" : "Adicionar" }} Feedback
-                </button>
-              </div>
-              <div v-if="denuncia.showFeedbackForm" class="feedback-form">
-                <textarea v-model="denuncia.newFeedback" placeholder="Escreva seu feedback aqui"></textarea>
-                <button @click="denuncia.feedback ? updateFeedback(denuncia) : submitFeedback(denuncia)" class="btn btn-success">
-                  Salvar Feedback
-                </button>
-              </div>
+          <div class="card-body">
+            <div class="info">
+              <span><strong>Órgão:</strong> {{ denuncia.orgao.nome }}</span>
+              <span><strong>Tipo:</strong> {{ denuncia.tipo.nome }}</span>
+              <span>
+                <strong>Urgência:</strong>
+                <span
+                  :class="{
+                    'high-urgency': denuncia.urgencia > 3,
+                    'medium-urgency': denuncia.urgencia <= 3,
+                  }"
+                >
+                  {{ denuncia.urgencia }}
+                </span>
+              </span>
+              <span>
+                <strong>Data:</strong>
+                {{ formatDate(denuncia.data) }}
+              </span>
             </div>
-          </transition>
+            <div class="card-footer">
+              <button
+                @click="toggleDetails(denuncia)"
+                class="btn btn-secondary"
+              >
+                {{ denuncia.showDetails ? "Ocultar Feedback" : "Ver Feedback" }}
+              </button>
+              <button
+                @click="deleteDenuncia(denuncia.id)"
+                class="btn btn-danger"
+              >
+                Excluir
+              </button>
+            </div>
+          </div>
+        </div>
+        <div v-if="denuncia.showDetails">
+          <div class="feedback">
+            <h3>Feedback:</h3>
+            <p>{{ denuncia.feedback ?? "Sem feedback" }}</p>
+          </div>
+          <div v-if="nivel == 1" class="card-footer">
+            <button
+              @click="toggleFeedbackForm(denuncia.id)"
+              class="btn btn-primary"
+            >
+              {{ denuncia.feedback ? "Editar" : "Adicionar" }} Feedback
+            </button>
+            <button
+              @click="denuncia.showDetails = false"
+              class="btn btn-secondary"
+            >
+              Voltar
+            </button>
+          </div>
+          <div v-if="denuncia.showFeedbackForm" class="feedback-form">
+            <textarea
+              v-model="denuncia.newFeedback"
+              placeholder="Escreva seu feedback aqui"
+            ></textarea>
+            <button
+              @click="
+                denuncia.feedback
+                  ? updateFeedback(denuncia)
+                  : submitFeedback(denuncia)
+              "
+              class="btn btn-success"
+            >
+              Salvar Feedback
+            </button>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </template>
-
 
 <script>
 import { HttpClient } from "@/common/http-client/http-client";
@@ -94,11 +126,11 @@ export default {
       } else {
         denuncias = await this.denunciaService.getById(this.userId);
       }
-      this.denuncias = denuncias.map(denuncia => ({
+      this.denuncias = denuncias.map((denuncia) => ({
         ...denuncia,
         showDetails: false,
         showFeedbackForm: false,
-        newFeedback: ""
+        newFeedback: "",
       }));
     },
     async deleteDenuncia(denunciaId) {
@@ -108,7 +140,7 @@ export default {
       }
     },
     async submitFeedback(denuncia) {
-      const feedback = new Feedback(denuncia, denuncia.newFeedback)
+      const feedback = new Feedback(denuncia, denuncia.newFeedback);
       await this.feedbackService.create(feedback);
       denuncia.feedback = denuncia.newFeedback;
       denuncia.showFeedbackForm = false;
@@ -124,7 +156,7 @@ export default {
       denuncia.showFeedbackForm = false;
     },
     async toggleDetails(denuncia) {
-      if(!denuncia.showDetails) {
+      if (!denuncia.showDetails) {
         await this.fetchFeedback(denuncia);
       }
       denuncia.showDetails = !denuncia.showDetails;
@@ -138,7 +170,7 @@ export default {
     },
     formatDate(date) {
       return moment(date).format("DD/MM/YYYY");
-    }, 
+    },
   },
 };
 </script>
